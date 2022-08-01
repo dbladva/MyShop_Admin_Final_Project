@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "94612728339",
+    "project_id": "admin-d986a",
+    "storage_bucket": "admin-d986a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:94612728339:android:4b4ac1d5c9a1bf3b14ade6",
+        "android_client_info": {
+          "package_name": "com.adminpanel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "94612728339-qecd3mfniopede012t18pbfd0c5h2mvp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.adminpanel",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "94612728339-or1vg03qmlj264hq33uj6umt9kccui3e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCY1bZTo4uqXsDwR5NA-QxReW5LOAaMWew"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "94612728339-or1vg03qmlj264hq33uj6umt9kccui3e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "94612728339-t7i2ankc5mif9p7n6skon3l3cr60o0me.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.AdminPanel"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:94612728339:android:48bfb2ea4885419514ade6",
+        "android_client_info": {
+          "package_name": "com.myshop_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "94612728339-603ctgmth5nf0oi2phki8343mtjnd855.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myshop_admin",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "94612728339-or1vg03qmlj264hq33uj6umt9kccui3e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCY1bZTo4uqXsDwR5NA-QxReW5LOAaMWew"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "94612728339-or1vg03qmlj264hq33uj6umt9kccui3e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "94612728339-t7i2ankc5mif9p7n6skon3l3cr60o0me.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.AdminPanel"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

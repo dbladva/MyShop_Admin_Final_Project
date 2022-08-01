@@ -20,6 +20,6 @@ export const getproduct = () => async (dispatch) => {
             });
         dispatch({ type: ActionType.GET_PRODUCT, payload: data })
     } catch (error) {
-        console.log(error);
+        // console.log(error);
     }
 }
