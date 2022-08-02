@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, l } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { getproduct } from '../../redux/action/auth.action'
@@ -8,6 +8,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import { uploadProduct } from '../../redux/action/product.action'
+import LinearGradient from 'react-native-linear-gradient';
 
 const Home = ({ navigation }) => {
   const [menu, setMenu] = useState('1')
@@ -25,6 +26,7 @@ const Home = ({ navigation }) => {
     { label: 'Drones', value: 'drones' }
   ]);
 
+ 
 
   const dispatch = useDispatch()
   useEffect(() => {
@@ -51,19 +53,24 @@ const Home = ({ navigation }) => {
 
   // console.log(cate);
   const uploadProductHandler = () => {
-    const data = ({
-      productImage,
-      name,
-      discription,
-      category,
-      price
-    })
-    dispatch(uploadProduct(data))
-    setCategory('')
-    setDescription('')
-    setName('')
-    setProductImage('')
-    setPrice('')
+    if (!(productImage === '' || name === '' || discription === '' || price === '' || category === '')) {
+
+      const data = ({
+        productImage,
+        name,
+        discription,
+        category,
+        price
+      })
+      dispatch(uploadProduct(data))
+      setCategory('')
+      setDescription('')
+      setName('')
+      setProductImage('')
+      setPrice('')
+    } else {
+      alert('Fillup all details...')
+    }
   }
 
   return (
@@ -90,77 +97,100 @@ const Home = ({ navigation }) => {
         {
           menu === '1' ?
             <>
-            <ScrollView>
-              <View style={styles.menuData}>
-                <DropDownPicker
-                  open={open}
-                  value={category}
-                  items={items}
-                  setOpen={setOpen}
-                  setValue={setCategory}
-                  setItems={setItems}
-                  containerStyle={styles.categoryDropdown}
-                />
+              <ScrollView>
+                <View style={styles.menuData}>
+                  <DropDownPicker
+                    open={open}
+                    value={category}
+                    items={items}
+                    setOpen={setOpen}
+                    setValue={setCategory}
+                    setItems={setItems}
+                    containerStyle={styles.categoryDropdown}
+                  />
 
-                <View style={styles.pickImage}>
-                  {
-                    productImage == '' ?
-                      <Image source={require('../../images/1.jpg')} style={{ height: 50, width: 50, borderRadius: 10 }} />
-                      :
-                      <Image source={{
-                        uri: productImage
-                      }} style={{ height: 50, width: 50, borderRadius: 10 }} />
-                  }
+                  <View style={styles.pickImage}>
+                    {
+                      productImage == '' ?
+                        <Image source={require('../../images/1.jpg')} style={{ height: 50, width: 50, borderRadius: 10 }} />
+                        :
+                        <Image source={{
+                          uri: productImage
+                        }} style={{ height: 50, width: 50, borderRadius: 10 }} />
+                    }
 
-                  <TouchableOpacity onPress={() => imageHandler()}>
-                    <Text style={styles.pickImageBtn}>Pick Image</Text>
-                  </TouchableOpacity>
+                    <TouchableOpacity onPress={() => imageHandler()}>
+                      <Text style={styles.pickImageBtn}>Pick Image</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <TextInput
+                    style={styles.input}
+                    onChangeText={(a) => setName(a)}
+                    value={name}
+                    placeholder={'Enter Item name'}
+                    placeholderTextColor={'#000000'}
+                  />
+
+                  <TextInput
+                    style={styles.descriptionInput}
+                    onChangeText={(a) => setDescription(a)}
+                    value={discription}
+                    placeholder={'Enter item Description'}
+                    placeholderTextColor={'#000000'}
+                    multiline
+                    numberOfLines={4}
+
+                  />
+
+                  <TextInput
+                    style={styles.input}
+                    onChangeText={(a) => setPrice(a)}
+                    value={price}
+                    placeholder={'Enter item price (₹)'}
+                    placeholderTextColor={'#000000'}
+                  />
+
                 </View>
 
-                <TextInput
-                  style={styles.input}
-                  onChangeText={(a) => setName(a)}
-                  value={name}
-                  placeholder={'Enter Item name'}
-                  placeholderTextColor={'#000000'}
-                />
+                {/* <View style={{ position: 'absolute', bottom: 30, width: '100%', }}> */}
+                <View style={{ marginTop: 70, marginBottom: 10, width: '100%', }}>
+                  <TouchableOpacity style={styles.uploadView} onPress={() => uploadProductHandler()}>
+                    <Text style={styles.uploadBtn}>Upload Product</Text>
+                  </TouchableOpacity>
 
-                <TextInput
-                  style={styles.descriptionInput}
-                  onChangeText={(a) => setDescription(a)}
-                  value={discription}
-                  placeholder={'Enter item Description'}
-                  placeholderTextColor={'#000000'}
-                  multiline
-                  numberOfLines={4}
-
-                />
-
-                <TextInput
-                  style={styles.input}
-                  onChangeText={(a) => setPrice(a)}
-                  value={price}
-                  placeholder={'Enter item price (₹)'}
-                  placeholderTextColor={'#000000'}
-                />
-
-              </View>
-
-              {/* <View style={{ position: 'absolute', bottom: 30, width: '100%', }}> */}
-              <View style={{ marginTop: 60, width: '100%', }}>
-                <TouchableOpacity style={styles.uploadView} onPress={() => uploadProductHandler()}>
-                  <Text style={styles.uploadBtn}>Upload Product</Text>
-                </TouchableOpacity>
-                
-              </View>
+                </View>
               </ScrollView>
+
             </>
             :
-            <Text>
-              Helllo
-            </Text>
+            null
+        }
+        {
+          menu === '2' ?
+            <View style={{ height: '100%', }}>
+              {/* <LinearGradient colors={['#085d87', '#27c7bb']}
+                style={{ marginTop: 30, height: 80, marginHorizontal: 20, }}
+                start={{ x: 1, y: 1 }}
+                end={{ x: 1, y: 0.5 }}> */}
+              <View style={{
+                marginTop: 30, height: 80, marginHorizontal: 20,
+                backgroundColor: 'rgba(55, 146, 220, 0.16)', borderRadius: 5,
+              }}>
+                <View>
+                  <Image source={require('../../images/1.jpg')} style={{ height: 80, width: 80, borderRadius: 5, }} />
+                </View>
+
+
+
+              </View>
+              {/* </LinearGradient> */}
+            </View>
+            :
+            null
         }
       </View>
+      
     </SafeAreaView>
   )
 }
