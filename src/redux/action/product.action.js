@@ -13,7 +13,8 @@ export const uploadProduct = (data) => (dispatch) => {
         price: data.price,
       })
       .then(() => {
-        console.log('User added!');
+        alert('Product added successfully!');
+        dispatch(getproduct())
       })
       .catch((error) => {
         console.log(error);
@@ -46,7 +47,28 @@ export const getproduct = () => async (dispatch) => {
           data.push(d);
         });
       });
-    dispatch({ type: ActionType.GET_PRODUCT, payload: data })
+    dispatch({ type: ActionType.GET_PRODUCT, payload: data})
+  } catch (error) {
+    dispatch({ type: ActionType.ERROR_PRODUCT, payload: error })
+  }
+}
+
+export const getProductDetail = (id) => async (dispatch) => {
+  try {
+    let data = [];
+    await firestore()
+      .collection('Product')
+      .doc(id)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(documentSnapshot => {
+          let d = {
+            ...documentSnapshot.data()
+          }
+          data.push(d);
+        });
+      });
+    dispatch({ type: ActionType.GET_PRODUCT_DETAIL, payload: data})
   } catch (error) {
     dispatch({ type: ActionType.ERROR_PRODUCT, payload: error })
   }

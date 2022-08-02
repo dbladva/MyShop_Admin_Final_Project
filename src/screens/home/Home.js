@@ -1,14 +1,14 @@
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, l } from 'react-native'
+import { Image, SafeAreaView, ScrollView, StyleSheet, Modal, Text, TextInput, TouchableOpacity, View, FlatList, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { getproduct } from '../../redux/action/auth.action'
 import { backgroundColor } from '../../colors/colors'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DropDownPicker from 'react-native-dropdown-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import { uploadProduct } from '../../redux/action/product.action'
-import LinearGradient from 'react-native-linear-gradient';
+import { getproduct } from '../../redux/action/product.action';
+import { getProductDetail } from '../../redux/action/product.action';
 
 const Home = ({ navigation }) => {
   const [menu, setMenu] = useState('1')
@@ -18,6 +18,8 @@ const Home = ({ navigation }) => {
   const [category, setCategory] = useState('');
   const [discription, setDescription] = useState('');
   const [price, setPrice] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [itemDetailId, setItemDetailId] = useState('');
 
   const [items, setItems] = useState([
     { label: 'Phone', value: 'phones' },
@@ -26,13 +28,11 @@ const Home = ({ navigation }) => {
     { label: 'Drones', value: 'drones' }
   ]);
 
- 
-
   const dispatch = useDispatch()
+
   useEffect(() => {
     dispatch(getproduct())
   }, [])
-  const item = useSelector(state => state.auth)
 
   const imageHandler = () => {
     ImagePicker.openPicker({
@@ -51,10 +51,8 @@ const Home = ({ navigation }) => {
     });
   }
 
-  // console.log(cate);
   const uploadProductHandler = () => {
     if (!(productImage === '' || name === '' || discription === '' || price === '' || category === '')) {
-
       const data = ({
         productImage,
         name,
@@ -72,6 +70,43 @@ const Home = ({ navigation }) => {
       alert('Fillup all details...')
     }
   }
+
+
+  console.log('itemDetailId', itemDetailId);
+
+  const allProduct = useSelector(state => state.product)
+  const addedItems = ({ item }) => {
+    return (
+      <TouchableOpacity style={{
+        marginTop: 20, height: 90, marginHorizontal: 20,
+        backgroundColor: 'rgba(55, 146, 220, 0.16)', borderRadius: 5,
+        flexDirection: 'row',
+        alignItems: 'center'
+      }} onPress={() => {
+        setModalVisible(true)
+        setItemDetailId(item.id)
+      }}>
+        <View>
+          <Image source={{
+            uri: item.imgURl
+          }} style={{ height: 90, width: 90, borderRadius: 5, }} />
+        </View>
+        <View style={{ marginLeft: 15, }}>
+          <Text numberOfLines={1} style={{ color: 'black', fontSize: 18, fontWeight: '600', maxWidth: 200, paddingVertical: 3, }}>{item.name}</Text>
+          <Text numberOfLines={2} style={{ color: 'gray', fontSize: 14, fontWeight: '500', maxWidth: 200, paddingVertical: 3, }}>{item.details}</Text>
+          <Text style={{ color: 'black', fontSize: 18, fontWeight: 'bold', paddingVertical: 3, }}>₹ {item.price}</Text>
+        </View>
+      </TouchableOpacity>
+
+    )
+  }
+
+  // if (modalVisible === true) {
+  //   dispatch(getProductDetail(itemDetailId))
+  // }
+
+
+
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: backgroundColor }}>
@@ -158,7 +193,6 @@ const Home = ({ navigation }) => {
                   <TouchableOpacity style={styles.uploadView} onPress={() => uploadProductHandler()}>
                     <Text style={styles.uploadBtn}>Upload Product</Text>
                   </TouchableOpacity>
-
                 </View>
               </ScrollView>
 
@@ -168,29 +202,50 @@ const Home = ({ navigation }) => {
         }
         {
           menu === '2' ?
-            <View style={{ height: '100%', }}>
-              {/* <LinearGradient colors={['#085d87', '#27c7bb']}
-                style={{ marginTop: 30, height: 80, marginHorizontal: 20, }}
-                start={{ x: 1, y: 1 }}
-                end={{ x: 1, y: 0.5 }}> */}
-              <View style={{
-                marginTop: 30, height: 80, marginHorizontal: 20,
-                backgroundColor: 'rgba(55, 146, 220, 0.16)', borderRadius: 5,
-              }}>
-                <View>
-                  <Image source={require('../../images/1.jpg')} style={{ height: 80, width: 80, borderRadius: 5, }} />
+            <>
+              <FlatList
+                data={allProduct.product}
+                renderItem={addedItems}
+                keyExtractor={item => item.id}
+              />
+
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                  Alert.alert("Modal has been closed.");
+                  setModalVisible(!modalVisible);
+                }}
+              >
+                <View style={styles.centeredView}>
+                  <View style={styles.modalView}>
+                    <Pressable
+                      style={[styles.button, styles.buttonClose]}
+                      onPress={() => [setModalVisible(!modalVisible), setItemDetailId('')]}
+                    >
+                      <AntDesign name="close" color={'#ffffff'} size={25} />
+                    </Pressable>
+
+                    {
+                    allProduct.product.map((d) => {
+                     if(d.id === itemDetailId){
+                      return(
+                        <Image source={{uri: d.imgURl}} style={{ width: 380,
+                          height: 200, borderTopRightRadius: 20,
+                          borderTopLeftRadius: 20,}} />
+                      )
+                     }
+                    })}
+                  </View>
                 </View>
-
-
-
-              </View>
-              {/* </LinearGradient> */}
-            </View>
+              </Modal>
+            </>
             :
             null
         }
       </View>
-      
+
     </SafeAreaView>
   )
 }
@@ -265,12 +320,62 @@ const styles = StyleSheet.create({
   },
   uploadBtn: {
     paddingVertical: 10,
-
     color: '#ffffff',
     fontSize: 20,
     fontWeight: '500',
     textAlign: 'center',
     width: '100%'
 
+  },
+
+  centeredView: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    width: 380,
+    height: 500,
+    // margin: 20,
+    backgroundColor: "white",
+    // borderRadius: 20,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
+    paddingHorizontal: 3,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  button: {
+    borderRadius: 100,
+    padding: 10,
+    // elevation: 2,
+    position: 'absolute',
+    right: 20,
+    top: 20,
+    zIndex: 100,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "rgba(55, 146, 220, 0.1)",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    color: '#000000',
+    marginBottom: 15,
+    textAlign: "center"
   }
 })
