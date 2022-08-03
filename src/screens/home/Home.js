@@ -3,6 +3,9 @@ import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { backgroundColor } from '../../colors/colors'
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Feather from 'react-native-vector-icons/Feather';
+import Entypo from 'react-native-vector-icons/Entypo';
 import DropDownPicker from 'react-native-dropdown-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
@@ -19,7 +22,6 @@ const Home = ({ navigation }) => {
   const [discription, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [itemDetailId, setItemDetailId] = useState('');
 
   const [items, setItems] = useState([
     { label: 'Phone', value: 'phones' },
@@ -71,20 +73,14 @@ const Home = ({ navigation }) => {
     }
   }
 
-
-  console.log('itemDetailId', itemDetailId);
-
   const allProduct = useSelector(state => state.product)
   const addedItems = ({ item }) => {
     return (
-      <TouchableOpacity style={{
+      <View style={{
         marginTop: 20, height: 90, marginHorizontal: 20,
         backgroundColor: 'rgba(55, 146, 220, 0.16)', borderRadius: 5,
         flexDirection: 'row',
         alignItems: 'center'
-      }} onPress={() => {
-        setModalVisible(true)
-        setItemDetailId(item.id)
       }}>
         <View>
           <Image source={{
@@ -96,17 +92,17 @@ const Home = ({ navigation }) => {
           <Text numberOfLines={2} style={{ color: 'gray', fontSize: 14, fontWeight: '500', maxWidth: 200, paddingVertical: 3, }}>{item.details}</Text>
           <Text style={{ color: 'black', fontSize: 18, fontWeight: 'bold', paddingVertical: 3, }}>₹ {item.price}</Text>
         </View>
-      </TouchableOpacity>
+        <TouchableOpacity style={{
+          position: 'absolute', top: 10,
+          right: 10
+        }} 
+        onPress={() => setModalVisible(true)}>
+          <Entypo name="dots-three-vertical" color={'#000000'} size={20} />
+        </TouchableOpacity>
+      </View>
 
     )
   }
-
-  // if (modalVisible === true) {
-  //   dispatch(getProductDetail(itemDetailId))
-  // }
-
-
-
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: backgroundColor }}>
@@ -195,7 +191,6 @@ const Home = ({ navigation }) => {
                   </TouchableOpacity>
                 </View>
               </ScrollView>
-
             </>
             :
             null
@@ -209,9 +204,12 @@ const Home = ({ navigation }) => {
                 keyExtractor={item => item.id}
               />
 
+
+
               <Modal
-                animationType="slide"
+                animationType="fade"
                 transparent={true}
+                
                 visible={modalVisible}
                 onRequestClose={() => {
                   Alert.alert("Modal has been closed.");
@@ -220,26 +218,18 @@ const Home = ({ navigation }) => {
               >
                 <View style={styles.centeredView}>
                   <View style={styles.modalView}>
+                  <MaterialCommunityIcons name="delete-empty" color={'#ffffff'} size={25} style={{padding: 10,backgroundColor: 'rgba(67, 225, 201, 0.5)',borderRadius: 50,}}  />
+                  <Feather name="edit-3" color={'#ffffff'} size={25} style={{marginVertical: 10,padding: 10,backgroundColor: 'rgba(67, 225, 201, 0.5)',borderRadius: 50,}}  />
                     <Pressable
                       style={[styles.button, styles.buttonClose]}
-                      onPress={() => [setModalVisible(!modalVisible), setItemDetailId('')]}
+                      onPress={() => setModalVisible(!modalVisible)}
                     >
-                      <AntDesign name="close" color={'#ffffff'} size={25} />
+                   <AntDesign name="close" color={'#ffffff'} size={30}  />
                     </Pressable>
-
-                    {
-                    allProduct.product.map((d) => {
-                     if(d.id === itemDetailId){
-                      return(
-                        <Image source={{uri: d.imgURl}} style={{ width: 380,
-                          height: 200, borderTopRightRadius: 20,
-                          borderTopLeftRadius: 20,}} />
-                      )
-                     }
-                    })}
                   </View>
                 </View>
               </Modal>
+
             </>
             :
             null
@@ -329,20 +319,17 @@ const styles = StyleSheet.create({
   },
 
   centeredView: {
-    flex: 1,
-    justifyContent: "flex-end",
-    alignItems: "center",
-    marginTop: 22
+flex: 1,
+justifyContent: 'center',
+alignItems: 'center',
+backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalView: {
-    width: 380,
-    height: 500,
-    // margin: 20,
-    backgroundColor: "white",
-    // borderRadius: 20,
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
-    paddingHorizontal: 3,
+    margin: 20,
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -356,17 +343,13 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 100,
     padding: 10,
-    // elevation: 2,
-    position: 'absolute',
-    right: 20,
-    top: 20,
-    zIndex: 100,
+    elevation: 2
   },
   buttonOpen: {
     backgroundColor: "#F194FF",
   },
   buttonClose: {
-    backgroundColor: "rgba(55, 146, 220, 0.1)",
+    backgroundColor: "#2196F3",
   },
   textStyle: {
     color: "white",
@@ -374,8 +357,8 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   modalText: {
-    color: '#000000',
     marginBottom: 15,
-    textAlign: "center"
+    textAlign: "center",
+    color: '#ffffff'
   }
 })
