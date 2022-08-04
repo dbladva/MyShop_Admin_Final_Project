@@ -15,3 +15,4 @@ export const SIGN_UP = "SIGN_UP"
 export const AUTH_ERROR = 'AUTH_ERROR'
 export const SIGNIN_SUCCESS = 'SIGNIN_SUCCESS'
 export const SIGNOUT_USER = 'SIGNOUT_USER'
+export const UID = "UID"

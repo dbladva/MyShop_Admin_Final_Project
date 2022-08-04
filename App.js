@@ -7,23 +7,18 @@ import Home from './src/screens/home/Home';
 import { Provider } from 'react-redux';
 import { configStore, store } from './src/redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
+import Navigation from './src/screens/components/Navigation';
 
 
-const App = ({navigation}) => {
+const App = ({ navigation }) => {
   const Stack = createNativeStackNavigator();
-
   const { Store, persistor } = configStore();
   return (
     <Provider store={Store}>
-       <PersistGate loading={null} persistor={persistor}>
-    <NavigationContainer>
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="Signin" component={Signin} />
-      <Stack.Screen name="Home" component={Home} />
-    </Stack.Navigator>
-  </NavigationContainer>
-  </PersistGate>
-  </Provider>
+      <PersistGate loading={null} persistor={persistor}>
+        <Navigation />
+      </PersistGate>
+    </Provider>
   )
 }
 

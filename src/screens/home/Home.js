@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, ScrollView, StyleSheet, Modal, Text, TextInput, TouchableOpacity, View, FlatList, Pressable, Alert } from 'react-native'
+import { Image, SafeAreaView, ScrollView, StyleSheet, Modal, Text, TextInput, TouchableOpacity, View, FlatList, Pressable, Alert, StatusBar } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { backgroundColor } from '../../colors/colors'
@@ -12,6 +12,7 @@ import storage from '@react-native-firebase/storage';
 import { deleteProduct, updateProduct, uploadProduct } from '../../redux/action/product.action'
 import { getproduct } from '../../redux/action/product.action';
 import { getProductDetail } from '../../redux/action/product.action';
+import { signoutEmail } from '../../redux/action/auth.action';
 
 const Home = ({ navigation }) => {
   const [menu, setMenu] = useState('1')
@@ -153,22 +154,43 @@ const Home = ({ navigation }) => {
 
   };
 
+  const logoutHandler = () => {
+    dispatch(signoutEmail())
+  }
   console.log(productId);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: backgroundColor }}>
+      <StatusBar backgroundColor={'white'} barStyle={'dark-content'} animated />
       <View style={{ flex: 1, }}>
         <View style={{ marginHorizontal: 20, marginTop: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Text style={{ fontSize: 28, letterSpacing: 3, fontWeight: 'bold ', color: '#000000',fontFamily: 'NotoSerif-Regular' }}>MyShop-Admin</Text>
-          <TouchableOpacity>
-            <AntDesign name="setting" color={'#000000'} size={25} />
+          <TouchableOpacity onPress={() =>  Alert.alert(
+                        "Logout",
+                        "Sure you want to Logout this id ? ",
+                        [
+                          {
+                            text: "Cancel",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                          },
+                          {
+                            text: "Yes", onPress: () => {
+                              logoutHandler(),
+                                setModalVisible(false)
+                            }
+                          }
+                        ]
+                      )}>
+            {/* <AntDesign name="setting" color={'#000000'} size={25} /> */}
+            <Image source={require('../../images/logout2.png')} style={{height: 30, width: 30,}} />
           </TouchableOpacity>
         </View>
 
         <View style={styles.menu}>
-          <TouchableOpacity onPress={() => setMenu('0')}>
+          {/* <TouchableOpacity onPress={() => setMenu('0')}>
             <Text style={[styles.menuItem, menu == 0 ? styles.selectColor : styles.menuItem]}>Data Stat</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity onPress={() => setMenu('1')}>
             <Text style={[styles.menuItem, menu == 1 ? styles.selectColor : styles.menuItem]}>Upload Item</Text>
           </TouchableOpacity>

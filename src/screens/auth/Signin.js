@@ -2,17 +2,16 @@ import { SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity,
 import React, { useEffect,useState} from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
-import { signinUserEmail, uid } from '../../redux/action/auth.action';
+import { signinUserEmail, userUid } from '../../redux/action/auth.action';
 
 const Signin = ({ navigation }) => {
   const [email,setEmail] = useState('')
   const [password,setPassword] = useState('')
 
   useEffect(() => {
-    dispatch(uid())
+    dispatch(userUid())
   },[])
   
-
   const dispatch = useDispatch()
 
   const LoginHandler = () => {
