@@ -153,7 +153,6 @@ const Home = ({ navigation }) => {
 
   };
 
-
   console.log(productId);
 
   return (
@@ -240,7 +239,6 @@ const Home = ({ navigation }) => {
                   />
 
                 </View>
-
                 {/* <View style={{ position: 'absolute', bottom: 30, width: '100%', }}> */}
                 <View style={{ marginTop: 70, marginBottom: 10, width: '100%', }}>
                   {

@@ -1,7 +1,10 @@
 import { combineReducers } from "redux";
-import { authReducer, productReducer } from "./product.reducer";
+import { authReducer } from "./auth.reducer";
+import { productReducer } from "./product.reducer";
+
 
 
 export const RootReducer = combineReducers({
-product: productReducer,
+    product: productReducer,
+    auth: authReducer,
 })
