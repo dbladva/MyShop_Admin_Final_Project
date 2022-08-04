@@ -2,6 +2,7 @@ import * as ActionType from '../ActionType'
 import firestore from '@react-native-firebase/firestore';
 
 export const uploadProduct = (data) => (dispatch) => {
+
   try {
     firestore()
       .collection('Product')
@@ -47,7 +48,7 @@ export const getproduct = () => async (dispatch) => {
           data.push(d);
         });
       });
-    dispatch({ type: ActionType.GET_PRODUCT, payload: data})
+    dispatch({ type: ActionType.GET_PRODUCT, payload: data })
   } catch (error) {
     dispatch({ type: ActionType.ERROR_PRODUCT, payload: error })
   }
@@ -68,8 +69,49 @@ export const getProductDetail = (id) => async (dispatch) => {
           data.push(d);
         });
       });
-    dispatch({ type: ActionType.GET_PRODUCT_DETAIL, payload: data})
+    dispatch({ type: ActionType.GET_PRODUCT_DETAIL, payload: data })
   } catch (error) {
     dispatch({ type: ActionType.ERROR_PRODUCT, payload: error })
   }
+}
+
+
+export const deleteProduct = (id) => async (dispatch) => {
+  try {
+    await firestore()
+      .collection('Product')
+      .doc(id)
+      .delete()
+      .then(() => {
+        console.log('Product deleted!');
+        dispatch(getproduct())
+      });
+  } catch (error) {
+    dispatch({ type: ActionType.ERROR_PRODUCT, payload: error })
+  }
+}
+
+
+export const updateProduct = (data,id) => (dispatch) => {
+  // dispatch({ type: ActionType.UPDATE_PRODUCT, payload: data })
+  try {
+    firestore()
+      .collection('Product')
+      .doc(id)
+      .update({
+        name: data.name,
+        category: data.category,
+        imgURl: data.productImage,
+        details: data.discription,
+        price: data.price,
+      })
+      .then(() => {
+        console.log('Product updated!');
+        // dispatch({ type: ActionType.UPDATED_PRODUCT, payload: data })
+        dispatch(getproduct())
+      });
+  } catch (error) {
+    dispatch({ type: ActionType.AUTH_ERROR, payload: error.code })
+  }
+
 }

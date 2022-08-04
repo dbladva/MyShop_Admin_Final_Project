@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, ScrollView, StyleSheet, Modal, Text, TextInput, TouchableOpacity, View, FlatList, Pressable } from 'react-native'
+import { Image, SafeAreaView, ScrollView, StyleSheet, Modal, Text, TextInput, TouchableOpacity, View, FlatList, Pressable, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { backgroundColor } from '../../colors/colors'
@@ -9,7 +9,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import DropDownPicker from 'react-native-dropdown-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
-import { uploadProduct } from '../../redux/action/product.action'
+import { deleteProduct, updateProduct, uploadProduct } from '../../redux/action/product.action'
 import { getproduct } from '../../redux/action/product.action';
 import { getProductDetail } from '../../redux/action/product.action';
 
@@ -22,6 +22,8 @@ const Home = ({ navigation }) => {
   const [discription, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [productId, setProductId] = useState(null);
+  const [submit, setSubmit] = useState(0);
 
   const [items, setItems] = useState([
     { label: 'Phone', value: 'phones' },
@@ -80,7 +82,7 @@ const Home = ({ navigation }) => {
         marginTop: 20, height: 90, marginHorizontal: 20,
         backgroundColor: 'rgba(55, 146, 220, 0.16)', borderRadius: 5,
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
       }}>
         <View>
           <Image source={{
@@ -95,8 +97,8 @@ const Home = ({ navigation }) => {
         <TouchableOpacity style={{
           position: 'absolute', top: 10,
           right: 10
-        }} 
-        onPress={() => setModalVisible(true)}>
+        }}
+          onPress={() => { setModalVisible(true), setProductId(item.id) }}>
           <Entypo name="dots-three-vertical" color={'#000000'} size={20} />
         </TouchableOpacity>
       </View>
@@ -104,11 +106,61 @@ const Home = ({ navigation }) => {
     )
   }
 
+  const deleteProductHandler = () => {
+    dispatch(deleteProduct(productId))
+  }
+
+  const handleEdit = id => {
+    setMenu('1')
+    let uData = allProduct.product.filter(p => p.id === id);
+    setName(uData[0].name);
+    setDescription(uData[0].details);
+    setPrice(uData[0].price);
+    setCategory(uData[0].category);
+    setProductImage(uData[0].imgURl)
+    setSubmit(1);
+    setModalVisible(false)
+    // setId(id);
+  };
+
+  const updateHandler = () => {
+    if (
+      !(
+        name == '' ||
+        discription == '' ||
+        category == '' ||
+        price == '' ||
+        productImage == ''
+      )
+    ) {
+      let Data = {
+        name,
+        discription,
+        price,
+        category,
+        productImage
+      };
+      dispatch(updateProduct(Data, productId));
+      setSubmit(0);
+      setName(''),
+        setDescription('');
+      setPrice('');
+      setCategory('');
+      setProductImage('')
+    } else {
+      alert('Fillup All Details...');
+    }
+
+  };
+
+
+  console.log(productId);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: backgroundColor }}>
       <View style={{ flex: 1, }}>
         <View style={{ marginHorizontal: 20, marginTop: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text style={{ fontSize: 28, letterSpacing: 3, fontWeight: '500', color: '#000000' }}>MyShop-Admin</Text>
+          <Text style={{ fontSize: 28, letterSpacing: 3, fontWeight: 'bold ', color: '#000000',fontFamily: 'NotoSerif-Regular' }}>MyShop-Admin</Text>
           <TouchableOpacity>
             <AntDesign name="setting" color={'#000000'} size={25} />
           </TouchableOpacity>
@@ -149,6 +201,12 @@ const Home = ({ navigation }) => {
                           uri: productImage
                         }} style={{ height: 50, width: 50, borderRadius: 10 }} />
                     }
+                    {
+                      productImage == '' ?
+                        <Text style={{ color: 'red' }}>Please upload product image</Text>
+                        :
+                        <Image source={require('../../images/checked.png')} style={{ height: 25, width: 25, }} />
+                    }
 
                     <TouchableOpacity onPress={() => imageHandler()}>
                       <Text style={styles.pickImageBtn}>Pick Image</Text>
@@ -171,13 +229,12 @@ const Home = ({ navigation }) => {
                     placeholderTextColor={'#000000'}
                     multiline
                     numberOfLines={4}
-
                   />
-
                   <TextInput
                     style={styles.input}
                     onChangeText={(a) => setPrice(a)}
                     value={price}
+                    keyboardType={'number-pad'}
                     placeholder={'Enter item price (₹)'}
                     placeholderTextColor={'#000000'}
                   />
@@ -186,9 +243,15 @@ const Home = ({ navigation }) => {
 
                 {/* <View style={{ position: 'absolute', bottom: 30, width: '100%', }}> */}
                 <View style={{ marginTop: 70, marginBottom: 10, width: '100%', }}>
-                  <TouchableOpacity style={styles.uploadView} onPress={() => uploadProductHandler()}>
-                    <Text style={styles.uploadBtn}>Upload Product</Text>
-                  </TouchableOpacity>
+                  {
+                    submit === 0 ? <TouchableOpacity style={styles.uploadView} onPress={() => uploadProductHandler()}>
+                      <Text style={styles.uploadBtn}>Upload Product</Text>
+                    </TouchableOpacity>
+                      :
+                      <TouchableOpacity style={styles.uploadView} onPress={() => updateHandler()}>
+                        <Text style={styles.uploadBtn}>Update Product</Text>
+                      </TouchableOpacity>
+                  }
                 </View>
               </ScrollView>
             </>
@@ -204,12 +267,9 @@ const Home = ({ navigation }) => {
                 keyExtractor={item => item.id}
               />
 
-
-
               <Modal
                 animationType="fade"
                 transparent={true}
-                
                 visible={modalVisible}
                 onRequestClose={() => {
                   Alert.alert("Modal has been closed.");
@@ -218,13 +278,39 @@ const Home = ({ navigation }) => {
               >
                 <View style={styles.centeredView}>
                   <View style={styles.modalView}>
-                  <MaterialCommunityIcons name="delete-empty" color={'#ffffff'} size={25} style={{padding: 10,backgroundColor: 'rgba(67, 225, 201, 0.5)',borderRadius: 50,}}  />
-                  <Feather name="edit-3" color={'#ffffff'} size={25} style={{marginVertical: 10,padding: 10,backgroundColor: 'rgba(67, 225, 201, 0.5)',borderRadius: 50,}}  />
+                    <TouchableOpacity onPress={() => {
+                      Alert.alert(
+                        "Delete product",
+                        "Sure you want to delete this product ? ",
+                        [
+                          {
+                            text: "Cancel",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                          },
+                          {
+                            text: "Yes", onPress: () => {
+                              deleteProductHandler(),
+                                setModalVisible(false)
+                            }
+                          }
+                        ]
+                      );
+
+                    }}
+                    >
+                      <MaterialCommunityIcons name="delete-empty" color={'#000000'} size={25} style={{ padding: 10, backgroundColor: 'rgba(67, 225, 201, 0.5)', borderRadius: 50, }} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => handleEdit(productId)}>
+                      <Feather name="edit-3" color={'#000000'} size={25} style={{ marginHorizontal: 10, padding: 10, backgroundColor: 'rgba(67, 225, 201, 0.5)', borderRadius: 50, }} />
+                    </TouchableOpacity>
+
                     <Pressable
                       style={[styles.button, styles.buttonClose]}
-                      onPress={() => setModalVisible(!modalVisible)}
+                      onPress={() => { setModalVisible(!modalVisible), setProductId(null) }}
                     >
-                   <AntDesign name="close" color={'#ffffff'} size={30}  />
+                      <AntDesign name="close" color={'#000000'} size={30} />
                     </Pressable>
                   </View>
                 </View>
@@ -235,11 +321,9 @@ const Home = ({ navigation }) => {
             null
         }
       </View>
-
     </SafeAreaView>
   )
 }
-
 export default Home
 
 const styles = StyleSheet.create({
@@ -319,10 +403,10 @@ const styles = StyleSheet.create({
   },
 
   centeredView: {
-flex: 1,
-justifyContent: 'center',
-alignItems: 'center',
-backgroundColor: 'rgba(0,0,0,0.5)',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalView: {
     margin: 20,

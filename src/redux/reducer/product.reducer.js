@@ -16,7 +16,7 @@ export const productReducer = (state = initValue, action) => {
                 error: '',
                 product: action.payload,
             }
-            case ActionType.GET_PRODUCT_DETAIL:
+        case ActionType.GET_PRODUCT_DETAIL:
             return {
                 ...state,
                 isLoading: false,
@@ -31,6 +31,14 @@ export const productReducer = (state = initValue, action) => {
                 isLoading: false,
                 error: action.payload
             }
+
+        // case ActionType.UPDATED_PRODUCT:
+        //     return {
+        //         ...state,
+        //         product: state.product.map((p) => p.id === action.payload.id ? action.payload : p),
+        //         isLoading: false,
+        //         error: ''
+        //     }
 
         case ActionType.LOADING_PRODUCT:
             return {
