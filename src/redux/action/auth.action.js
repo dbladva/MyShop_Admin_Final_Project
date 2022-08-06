@@ -4,7 +4,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-community/async-storage';
 
-export const signinUserEmail = (email, password,navigation) => async (dispatch) => {
+export const signinUserEmail = (email, password, navigation) => async (dispatch) => {
     auth()
         .signInWithEmailAndPassword(email, password)
         .then((user) => {
@@ -12,41 +12,39 @@ export const signinUserEmail = (email, password,navigation) => async (dispatch) 
                 AsyncStorage.setItem("user", user.user.uid);
                 dispatch({ type: ActionType.SIGNIN_SUCCESS, payload: user.user })
             } else {
-                // console.log("2", user);
                 dispatch({ type: ActionType.USER_EMAIL, payload: "Please verify your email Address." })
             }
         })
         .catch((error) => {
-            // console.log("3");
             dispatch({ type: ActionType.AUTH_ERROR, payload: error.code })
         })
 }
 
 export const userUid = () => async (dispatch) => {
+    // dispatch(Loading())
     try {
-        dispatch(Loading())
         const value = await AsyncStorage.getItem('user')
         if (value !== null) {
             console.log('Value', value);
-        }else{
-            console.log('error');
+        } else {
+            // console.log(value);
         }
-        dispatch({ type: ActionType.UID, payload: value })
+        dispatch({ type: ActionType.UID, payload: value})
     } catch (e) {
-        console.log(e);
+        // console.log(e);
         dispatch({ type: ActionType.AUTH_ERROR, payload: error.code })
     }
 }
 
 export const signoutEmail = () => (dispatch) => {
-    dispatch(Loading())
+    // dispatch(Loading())
     try {
         auth()
             .signOut()
             .then(() => {
                 AsyncStorage.clear()
-                dispatch({ type: ActionType.SIGNOUT_USER,})
-                dispatch(uid())
+                dispatch({ type: ActionType.SIGNOUT_USER, })
+                dispatch(userUid())
             });
     } catch (e) {
         dispatch({ type: ActionType.AUTH_ERROR, payload: error.code })

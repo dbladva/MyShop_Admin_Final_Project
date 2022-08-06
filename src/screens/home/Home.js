@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, ScrollView, StyleSheet, Modal, Text, TextInput, TouchableOpacity, View, FlatList, Pressable, Alert, StatusBar } from 'react-native'
+import { Image, SafeAreaView, ScrollView, StyleSheet, Modal, Text, TextInput, TouchableOpacity, View, FlatList, Pressable, Alert, StatusBar, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { backgroundColor } from '../../colors/colors'
@@ -80,7 +80,8 @@ const Home = ({ navigation }) => {
   const addedItems = ({ item }) => {
     return (
       <View style={{
-        marginTop: 20, height: 90, marginHorizontal: 20,
+
+        marginTop: 20, height: 95, marginHorizontal: 20,
         backgroundColor: 'rgba(55, 146, 220, 0.16)', borderRadius: 5,
         flexDirection: 'row',
         alignItems: 'center',
@@ -88,7 +89,7 @@ const Home = ({ navigation }) => {
         <View>
           <Image source={{
             uri: item.imgURl
-          }} style={{ height: 90, width: 90, borderRadius: 5, }} />
+          }} style={{ height: 95, width: 95, borderRadius: 5, }} />
         </View>
         <View style={{ marginLeft: 15, }}>
           <Text numberOfLines={1} style={{ color: 'black', fontSize: 18, fontWeight: '600', maxWidth: 200, paddingVertical: 3, }}>{item.name}</Text>
@@ -103,9 +104,22 @@ const Home = ({ navigation }) => {
           <Entypo name="dots-three-vertical" color={'#000000'} size={20} />
         </TouchableOpacity>
       </View>
-
     )
   }
+
+  const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => {
+      setRefreshing(false)
+      dispatch(getproduct())
+    });
+  }, []);
 
   const deleteProductHandler = () => {
     dispatch(deleteProduct(productId))
@@ -121,7 +135,6 @@ const Home = ({ navigation }) => {
     setProductImage(uData[0].imgURl)
     setSubmit(1);
     setModalVisible(false)
-    // setId(id);
   };
 
   const updateHandler = () => {
@@ -143,8 +156,8 @@ const Home = ({ navigation }) => {
       };
       dispatch(updateProduct(Data, productId));
       setSubmit(0);
-      setName(''),
-        setDescription('');
+      setName('');
+      setDescription('');
       setPrice('');
       setCategory('');
       setProductImage('')
@@ -157,33 +170,32 @@ const Home = ({ navigation }) => {
   const logoutHandler = () => {
     dispatch(signoutEmail())
   }
-  console.log(productId);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: backgroundColor }}>
       <StatusBar backgroundColor={'white'} barStyle={'dark-content'} animated />
       <View style={{ flex: 1, }}>
         <View style={{ marginHorizontal: 20, marginTop: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text style={{ fontSize: 28, letterSpacing: 3, fontWeight: 'bold ', color: '#000000',fontFamily: 'NotoSerif-Regular' }}>MyShop-Admin</Text>
-          <TouchableOpacity onPress={() =>  Alert.alert(
-                        "Logout",
-                        "Sure you want to Logout this id ? ",
-                        [
-                          {
-                            text: "Cancel",
-                            onPress: () => console.log("Cancel Pressed"),
-                            style: "cancel"
-                          },
-                          {
-                            text: "Yes", onPress: () => {
-                              logoutHandler(),
-                                setModalVisible(false)
-                            }
-                          }
-                        ]
-                      )}>
+          <Text style={{ fontSize: 28, letterSpacing: 3, fontWeight: 'bold ', color: '#000000', fontFamily: 'NotoSerif-Regular' }}>MyShop-Admin</Text>
+          <TouchableOpacity onPress={() => Alert.alert(
+            "Logout",
+            "Sure you want to Logout this id ? ",
+            [
+              {
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+              },
+              {
+                text: "Yes", onPress: () => {
+                  logoutHandler(),
+                    setModalVisible(false)
+                }
+              }
+            ]
+          )}>
             {/* <AntDesign name="setting" color={'#000000'} size={25} /> */}
-            <Image source={require('../../images/logout2.png')} style={{height: 30, width: 30,}} />
+            <Image source={require('../../images/logout2.png')} style={{ height: 30, width: 30, }} />
           </TouchableOpacity>
         </View>
 
@@ -212,7 +224,6 @@ const Home = ({ navigation }) => {
                     setItems={setItems}
                     containerStyle={styles.categoryDropdown}
                   />
-
                   <View style={styles.pickImage}>
                     {
                       productImage == '' ?
@@ -224,7 +235,7 @@ const Home = ({ navigation }) => {
                     }
                     {
                       productImage == '' ?
-                        <Text style={{ color: 'red' }}>Please upload product image</Text>
+                        <Text style={{ color: 'red' }}>Upload product image.</Text>
                         :
                         <Image source={require('../../images/checked.png')} style={{ height: 25, width: 25, }} />
                     }
@@ -251,6 +262,7 @@ const Home = ({ navigation }) => {
                     multiline
                     numberOfLines={4}
                   />
+
                   <TextInput
                     style={styles.input}
                     onChangeText={(a) => setPrice(a)}
@@ -261,7 +273,7 @@ const Home = ({ navigation }) => {
                   />
 
                 </View>
-                {/* <View style={{ position: 'absolute', bottom: 30, width: '100%', }}> */}
+
                 <View style={{ marginTop: 70, marginBottom: 10, width: '100%', }}>
                   {
                     submit === 0 ? <TouchableOpacity style={styles.uploadView} onPress={() => uploadProductHandler()}>
@@ -285,6 +297,18 @@ const Home = ({ navigation }) => {
                 data={allProduct.product}
                 renderItem={addedItems}
                 keyExtractor={item => item.id}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    colors={["rgba(82, 219, 209, 0.5)", 'rgba(142, 217, 108, 0.5)', 'rgba(138, 141, 221, 0.5)', 'rgba(75, 147, 209, 0.5)', 'rgba(226, 109, 209, 0.5)']}
+                    tintColor="blue"
+                    titleColor="red"
+
+                  />
+                }
+
+
               />
 
               <Modal

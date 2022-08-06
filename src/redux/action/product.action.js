@@ -1,5 +1,7 @@
 import * as ActionType from '../ActionType'
 import firestore from '@react-native-firebase/firestore';
+import PushNotification, {Importance} from 'react-native-push-notification';
+import { Vibration } from 'react-native';
 
 export const uploadProduct = (data) => (dispatch) => {
 
@@ -14,8 +16,15 @@ export const uploadProduct = (data) => (dispatch) => {
         price: data.price,
       })
       .then(() => {
-        alert('Product added successfully!');
-        dispatch(getproduct())
+        // alert('Product added successfully!');
+
+        PushNotification.localNotification({
+          channelId: "channel-id",
+          title: 'Successfull',
+          message: 'Product added successfully!',
+          vibrate: true,
+          Vibration: 300,
+      })
       })
       .catch((error) => {
         console.log(error);

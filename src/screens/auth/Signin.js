@@ -1,29 +1,27 @@
 import { SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useEffect,useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useDispatch } from 'react-redux';
 import { signinUserEmail, userUid } from '../../redux/action/auth.action';
 
 const Signin = ({ navigation }) => {
-  const [email,setEmail] = useState('')
-  const [password,setPassword] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   useEffect(() => {
     dispatch(userUid())
-  },[])
-  
+  }, [])
+
   const dispatch = useDispatch()
 
   const LoginHandler = () => {
     if (email !== '' && password !== '') {
-      dispatch(signinUserEmail(email, password,navigation))
+      dispatch(signinUserEmail(email, password, navigation))
     } else {
       alert('Fill up all details.')
     }
   };
-
-
-
+    
   return (
     <SafeAreaView style={{ flex: 1, }}>
       <View style={{ flex: 1, backgroundColor: '#2C2C3C', justifyContent: 'center' }}>
@@ -34,7 +32,7 @@ const Signin = ({ navigation }) => {
             onChangeText={(a) => setEmail(a)}
             placeholder={'User Name'}
             placeholderTextColor={'#ffffff'}
-          // value={text}
+            autoCapitalize={'none'}
           />
           <TextInput
             style={styles.input}
@@ -42,13 +40,13 @@ const Signin = ({ navigation }) => {
             secureTextEntry={true}
             placeholder={'Password'}
             placeholderTextColor={'#ffffff'}
-          // value={text}
+            autoCapitalize={'none'}
           />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 30, }}>
             <TouchableOpacity>
               <Text style={styles.forgotPssword}>Forgot Password ?</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{ alignItems: 'center' }} onPress={()=> LoginHandler()} >
+            <TouchableOpacity style={{ alignItems: 'center' }} onPress={() => LoginHandler()} >
               <AntDesign name="arrowright" color={'#ffffff'} size={30} style={{ padding: 25, backgroundColor: 'red', borderRadius: 100, }} />
             </TouchableOpacity>
           </View>

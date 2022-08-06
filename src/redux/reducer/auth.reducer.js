@@ -2,7 +2,7 @@ import * as ActionType from '../ActionType'
 
 const initValue = {
     isLoading: false,
-    auth: null,
+    user: null,
     productDetails: '',
     error: '',
     authMsg: ''
@@ -34,7 +34,6 @@ export const authReducer = (state = initValue, action) => {
                 user: null,
                 authMsg: ''
             }
-
         case ActionType.SIGNIN_SUCCESS:
             return {
                 ...state,
