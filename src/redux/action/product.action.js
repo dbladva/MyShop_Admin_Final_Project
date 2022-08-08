@@ -24,6 +24,7 @@ export const uploadProduct = (data) => (dispatch) => {
           message: 'Product added successfully!',
           vibrate: true,
           Vibration: 300,
+          largeIcon: data.imgURl, 
       })
       })
       .catch((error) => {

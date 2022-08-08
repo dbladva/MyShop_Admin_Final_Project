@@ -1,4 +1,4 @@
-import { Image, SafeAreaView, ScrollView, StyleSheet, Modal, Text, TextInput, TouchableOpacity, View, FlatList, Pressable, Alert, StatusBar, RefreshControl } from 'react-native'
+import { Image, SafeAreaView, ScrollView, StyleSheet, Modal, Text, TextInput, TouchableOpacity, View, FlatList, Pressable, Alert, StatusBar, RefreshControl, Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { backgroundColor } from '../../colors/colors'
@@ -38,6 +38,8 @@ const Home = ({ navigation }) => {
   useEffect(() => {
     dispatch(getproduct())
   }, [])
+
+  console.log('ossssss',Platform.OS);
 
   const imageHandler = () => {
     ImagePicker.openPicker({
@@ -80,7 +82,6 @@ const Home = ({ navigation }) => {
   const addedItems = ({ item }) => {
     return (
       <View style={{
-
         marginTop: 20, height: 95, marginHorizontal: 20,
         backgroundColor: 'rgba(55, 146, 220, 0.16)', borderRadius: 5,
         flexDirection: 'row',
